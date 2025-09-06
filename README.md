@@ -85,15 +85,23 @@ The performance was evaluated using the **Silhouette Score**.
 ## Visualizations  
 
 - **KMeans Clustering**  
+<img width="546" height="433" alt="image" src="https://github.com/user-attachments/assets/5d6af0a8-a7c3-44ab-8505-71baaf420778" />
 
 
 - **Hierarchical Clustering**  
- 
+ <img width="546" height="433" alt="image" src="https://github.com/user-attachments/assets/4e6bb093-fb61-4007-9b93-2bdf51700204" />
 
-- **DBSCAN Clustering**  
+
+- **DBSCAN Clustering**
+  <img width="546" height="433" alt="image" src="https://github.com/user-attachments/assets/b1ea73b2-a2e6-4201-9617-36e4bf224a61" />
+
 
 ---
 
 ## App Screenshot
-*(To be added later)*
+<img width="1892" height="739" alt="image" src="https://github.com/user-attachments/assets/bfa133dc-bb50-4551-9b96-f353159fdfb6" />
+<img width="1919" height="888" alt="image" src="https://github.com/user-attachments/assets/f8ee118e-3ae4-4486-9d2e-df9d8c28a8a7" />
+<img width="1569" height="769" alt="image" src="https://github.com/user-attachments/assets/2a420552-ecdb-437f-b43e-6ae0f769aa34" />
+
+
 
