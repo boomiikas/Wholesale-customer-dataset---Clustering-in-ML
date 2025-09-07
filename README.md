@@ -88,12 +88,12 @@ The performance was evaluated using the **Silhouette Score**.
 <img width="546" height="433" alt="image" src="https://github.com/user-attachments/assets/5d6af0a8-a7c3-44ab-8505-71baaf420778" />
 
 
-- **Hierarchical Clustering**  
- <img width="546" height="433" alt="image" src="https://github.com/user-attachments/assets/4e6bb093-fb61-4007-9b93-2bdf51700204" />
+- **Hierarchical Clustering**
+<img width="546" height="433" alt="image" src="https://github.com/user-attachments/assets/4e6bb093-fb61-4007-9b93-2bdf51700204" />
 
 
 - **DBSCAN Clustering**
-  <img width="546" height="433" alt="image" src="https://github.com/user-attachments/assets/b1ea73b2-a2e6-4201-9617-36e4bf224a61" />
+<img width="546" height="433" alt="image" src="https://github.com/user-attachments/assets/b1ea73b2-a2e6-4201-9617-36e4bf224a61" />
 
 
 ---
