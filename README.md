@@ -1,11 +1,15 @@
 # Wholesale Customers Dataset Analysis  
 
-This project explores the **Wholesale Customers Dataset** to understand customer purchasing behavior and patterns across different product categories. The analysis is performed in a Jupyter Notebook and an interactive **Streamlit web app**.  
+This project explores the **Wholesale Customers Dataset** to understand customer purchasing behavior and patterns across different product categories. The analysis is performed in a **Jupyter Notebook** and an interactive **Gradio (Hugging Face)** app.  
 
-🔗 **Live App:** [Wholesale Customer Clustering]([https://huggingface.co/spaces/boomiikas/Wholesale-customer-clustering])  
+🔗 **Live App:** [Wholesale Customer Clustering](https://huggingface.co/spaces/boomiikas/Wholesale-customer-clustering)  
 
 ---
 
+## App Screenshot
+<img width="1370" height="880" alt="image" src="https://github.com/user-attachments/assets/c7052f76-6a48-400d-97da-a89a24bce880" />
+
+---
 ## Dataset  
 
 The dataset contains annual spending by clients of a wholesale distributor across various product categories.  
@@ -43,11 +47,13 @@ The dataset contains annual spending by clients of a wholesale distributor acros
 
 ---
 
-## How to Run Locally
+## How to Run Locally  
+
 1. Clone this repository
    ```bash
    git clone <your-repo-url>
    cd <repo-folder>
+
    ```
 2. Install dependencies
    ```bash
@@ -97,10 +103,4 @@ The performance was evaluated using the **Silhouette Score**.
 
 
 ---
-
-## App Screenshot
-<img width="1370" height="880" alt="image" src="https://github.com/user-attachments/assets/c7052f76-6a48-400d-97da-a89a24bce880" />
-
-
-
 
