@@ -2,7 +2,7 @@
 
 This project explores the **Wholesale Customers Dataset** to understand customer purchasing behavior and patterns across different product categories. The analysis is performed in a Jupyter Notebook and an interactive **Streamlit web app**.  
 
-🔗 **Live App:** [Wholesale Customer Dataset Streamlit App](https://wholesale-customer-dataset-b5.streamlit.app/)  
+🔗 **Live App:** [Wholesale Customer Clustering]([https://huggingface.co/spaces/boomiikas/Wholesale-customer-clustering])  
 
 ---
 
@@ -99,9 +99,8 @@ The performance was evaluated using the **Silhouette Score**.
 ---
 
 ## App Screenshot
-<img width="1892" height="739" alt="image" src="https://github.com/user-attachments/assets/bfa133dc-bb50-4551-9b96-f353159fdfb6" />
-<img width="1919" height="888" alt="image" src="https://github.com/user-attachments/assets/f8ee118e-3ae4-4486-9d2e-df9d8c28a8a7" />
-<img width="1569" height="769" alt="image" src="https://github.com/user-attachments/assets/2a420552-ecdb-437f-b43e-6ae0f769aa34" />
+<img width="1370" height="880" alt="image" src="https://github.com/user-attachments/assets/c7052f76-6a48-400d-97da-a89a24bce880" />
+
 
 
 
