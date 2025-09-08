@@ -34,7 +34,7 @@ df_pca = pd.DataFrame(X_pca, columns=["PC1", "PC2"])
 df_pca["Cluster"] = labels
 
 # -------------------
-# Give each cluster a meaningful name
+# Cluster names
 # -------------------
 cluster_meanings = {
     0: "Cluster 0 - Fresh & Grocery Buyers",
@@ -43,21 +43,16 @@ cluster_meanings = {
 }
 
 # -------------------
-# Prediction + Plot function
+# Prediction function
 # -------------------
 def predict_cluster(Fresh, Milk, Grocery, Frozen, Detergents_Paper, Delicassen):
-    # Scale input
     input_data = np.array([[Fresh, Milk, Grocery, Frozen, Detergents_Paper, Delicassen]])
     input_scaled = scaler.transform(input_data)
-    
-    # PCA transform
     input_pca = pca.transform(input_scaled)
-    
-    # Predict cluster
     cluster = kmeans.predict(input_pca)[0]
     cluster_name = cluster_meanings.get(cluster, f"Cluster {cluster}")
-    
-    # Plot clusters + input point
+
+    # Plot
     plt.figure(figsize=(7,5))
     sns.scatterplot(x="PC1", y="PC2", hue="Cluster", data=df_pca, palette="Set2", s=60)
     plt.scatter(input_pca[0,0], input_pca[0,1], color="red", s=120, edgecolor="black", marker="X", label="Your Input")
@@ -65,40 +60,36 @@ def predict_cluster(Fresh, Milk, Grocery, Frozen, Detergents_Paper, Delicassen):
     plt.title(cluster_name)
     plt.xlabel("PC1")
     plt.ylabel("PC2")
-    
-    # Save plot
     plt.tight_layout()
     plt.savefig("cluster_plot.png")
     plt.close()
-    
+
     return cluster_name, "cluster_plot.png"
 
 # -------------------
-# Login check
+# Login function
 # -------------------
 USERNAME = "admin"
 PASSWORD = "1234"
 
 def login(username, password):
     if username == USERNAME and password == PASSWORD:
-        return gr.update(visible=True), gr.update(visible=False)
+        return gr.update(visible=True), gr.update(visible=False, value="")
     else:
         return gr.update(visible=False), gr.update(visible=True, value="❌ Invalid login. Try again.")
 
 # -------------------
-# Gradio Blocks Layout
+# Gradio App
 # -------------------
 with gr.Blocks() as demo:
     gr.Markdown("## 🔐 Wholesale Customers Clustering Login")
-    
+
     with gr.Row():
         user = gr.Textbox(label="Username")
         pwd = gr.Textbox(label="Password", type="password")
-    
     login_btn = gr.Button("Login")
     error_msg = gr.Textbox(label="Message", visible=False)
-    
-    # Hidden clustering interface
+
     with gr.Group(visible=False) as clustering_ui:
         gr.Markdown("### 🛒 Wholesale Customers Clustering (KMeans + PCA)")
         inputs = [
@@ -113,8 +104,9 @@ with gr.Blocks() as demo:
             gr.Textbox(label="Predicted Cluster"),
             gr.Image(type="filepath", label="Cluster Visualization")
         ]
-        gr.Interface(fn=predict_cluster, inputs=inputs, outputs=outputs).render()
-    
+        submit_btn = gr.Button("Predict Cluster")
+        submit_btn.click(fn=predict_cluster, inputs=inputs, outputs=outputs)
+
     login_btn.click(fn=login, inputs=[user, pwd], outputs=[clustering_ui, error_msg])
 
 if __name__ == "__main__":
