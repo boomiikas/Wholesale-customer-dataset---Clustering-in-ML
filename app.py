@@ -1,79 +1,121 @@
-import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import RobustScaler
-from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
-from sklearn.metrics import silhouette_score
-from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import seaborn as sns
+import gradio as gr
 
-st.set_page_config(layout="wide")
-st.title("Clustering Analysis Dashboard")
+from sklearn.preprocessing import RobustScaler
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 
-# 1️⃣ Upload dataset
-uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
-if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-    st.subheader("Dataset Preview")
-    st.dataframe(df.head())
+# -------------------
+# Load dataset
+# -------------------
+df = pd.read_csv("Wholesale customers data.csv")
 
-    # Select features to scale & cluster
-    features = ['Fresh', 'Milk', 'Grocery', 'Frozen', 'Detergents_Paper', 'Delicassen']
-    X = df[features]
+# Select features
+features = ["Fresh", "Milk", "Grocery", "Frozen", "Detergents_Paper", "Delicassen"]
+X = df[features]
 
-    # 2️⃣ Scale features using RobustScaler
-    scaler = RobustScaler()
-    X_scaled = scaler.fit_transform(X)
+# Scale
+scaler = RobustScaler()
+X_scaled = scaler.fit_transform(X)
+
+# PCA
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+# KMeans clustering
+kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+labels = kmeans.fit_predict(X_pca)
+
+# Add PCA + cluster labels back to df
+df_pca = pd.DataFrame(X_pca, columns=["PC1", "PC2"])
+df_pca["Cluster"] = labels
+
+# -------------------
+# Give each cluster a meaningful name
+# -------------------
+cluster_meanings = {
+    0: "Cluster 0 - Fresh & Grocery Buyers",
+    1: "Cluster 1 - Milk & Detergents Buyers",
+    2: "Cluster 2 - Frozen & Delicassen Buyers"
+}
+
+# -------------------
+# Prediction + Plot function
+# -------------------
+def predict_cluster(Fresh, Milk, Grocery, Frozen, Detergents_Paper, Delicassen):
+    # Scale input
+    input_data = np.array([[Fresh, Milk, Grocery, Frozen, Detergents_Paper, Delicassen]])
+    input_scaled = scaler.transform(input_data)
     
-    st.subheader("Scaled Features (first 5 rows)")
-    st.dataframe(pd.DataFrame(X_scaled, columns=features).head())
-
-    # 3️⃣ Sidebar - algorithm & parameters
-    st.sidebar.header("Clustering Options")
-    algo = st.sidebar.selectbox("Select Algorithm", ["KMeans", "Hierarchical", "DBSCAN"])
+    # PCA transform
+    input_pca = pca.transform(input_scaled)
     
-    if algo in ["KMeans", "Hierarchical"]:
-        n_clusters = st.sidebar.slider("Number of Clusters", 2, 10, 3)
-    if algo == "DBSCAN":
-        eps = st.sidebar.slider("eps", 0.1, 10.0, 0.5)
-        min_samples = st.sidebar.slider("min_samples", 1, 20, 5)
+    # Predict cluster
+    cluster = kmeans.predict(input_pca)[0]
+    cluster_name = cluster_meanings.get(cluster, f"Cluster {cluster}")
+    
+    # Plot clusters + input point
+    plt.figure(figsize=(7,5))
+    sns.scatterplot(x="PC1", y="PC2", hue="Cluster", data=df_pca, palette="Set2", s=60)
+    plt.scatter(input_pca[0,0], input_pca[0,1], color="red", s=120, edgecolor="black", marker="X", label="Your Input")
+    plt.legend()
+    plt.title(cluster_name)
+    plt.xlabel("PC1")
+    plt.ylabel("PC2")
+    
+    # Save plot
+    plt.tight_layout()
+    plt.savefig("cluster_plot.png")
+    plt.close()
+    
+    return cluster_name, "cluster_plot.png"
 
-    if st.button("Run Clustering"):
-        # 4️⃣ Fit selected clustering algorithm
-        if algo == "KMeans":
-            model = KMeans(n_clusters=n_clusters, random_state=42)
-        elif algo == "Hierarchical":
-            model = AgglomerativeClustering(n_clusters=n_clusters)
-        else:
-            model = DBSCAN(eps=eps, min_samples=min_samples)
-        
-        labels = model.fit_predict(X_scaled)
+# -------------------
+# Login check
+# -------------------
+USERNAME = "admin"
+PASSWORD = "1234"
 
-        # 5️⃣ Compute silhouette score
-        if len(set(labels)) > 1 and len(set(labels)) != 1:
-            sil = silhouette_score(X_scaled, labels)
-        else:
-            sil = -1  # silhouette not defined for single cluster
-        st.write(f"**Silhouette Score:** {sil:.3f}")
+def login(username, password):
+    if username == USERNAME and password == PASSWORD:
+        return gr.update(visible=True), gr.update(visible=False)
+    else:
+        return gr.update(visible=False), gr.update(visible=True, value="❌ Invalid login. Try again.")
 
-        # 6️⃣ Show cluster sizes & outliers
-        cluster_sizes = pd.Series(labels).value_counts().to_dict()
-        st.write("**Cluster Sizes:**", cluster_sizes)
+# -------------------
+# Gradio Blocks Layout
+# -------------------
+with gr.Blocks() as demo:
+    gr.Markdown("## 🔐 Wholesale Customers Clustering Login")
+    
+    with gr.Row():
+        user = gr.Textbox(label="Username")
+        pwd = gr.Textbox(label="Password", type="password")
+    
+    login_btn = gr.Button("Login")
+    error_msg = gr.Textbox(label="Message", visible=False)
+    
+    # Hidden clustering interface
+    with gr.Group(visible=False) as clustering_ui:
+        gr.Markdown("### 🛒 Wholesale Customers Clustering (KMeans + PCA)")
+        inputs = [
+            gr.Number(label="Fresh"),
+            gr.Number(label="Milk"),
+            gr.Number(label="Grocery"),
+            gr.Number(label="Frozen"),
+            gr.Number(label="Detergents_Paper"),
+            gr.Number(label="Delicassen")
+        ]
+        outputs = [
+            gr.Textbox(label="Predicted Cluster"),
+            gr.Image(type="filepath", label="Cluster Visualization")
+        ]
+        gr.Interface(fn=predict_cluster, inputs=inputs, outputs=outputs).render()
+    
+    login_btn.click(fn=login, inputs=[user, pwd], outputs=[clustering_ui, error_msg])
 
-        if algo == "DBSCAN":
-            n_outliers = sum(labels == -1)
-            st.write(f"**Number of Outliers:** {n_outliers}")
-
-        # 7️⃣ Add labels to dataset & allow download
-        df['Cluster'] = labels
-        csv = df.to_csv(index=False).encode('utf-8')
-        st.download_button("Download CSV with Cluster Labels", csv, "clustered_data.csv", "text/csv")
-
-        # 8️⃣ Visualize clusters using PCA
-        pca = PCA(n_components=2)
-        X_pca = pca.fit_transform(X_scaled)
-        plt.figure(figsize=(8,6))
-        sns.scatterplot(x=X_pca[:,0], y=X_pca[:,1], hue=labels, palette="tab10")
-        plt.title(f"{algo} Clustering (PCA 2D Projection)")
-        st.pyplot(plt)
+if __name__ == "__main__":
+    demo.launch()
